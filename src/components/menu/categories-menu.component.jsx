@@ -3,6 +3,7 @@ import '../menu/categories-menu.styles.scss'
 
 
 
+
 export const CategoriesMenu = ({categories}) => {
   
 
