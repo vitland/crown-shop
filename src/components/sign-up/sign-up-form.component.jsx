@@ -24,6 +24,7 @@ export const SignUpForm = () => {
     setFormFields(defaultFormFields);
   };
   const handleSubmit = async (event) => {
+    console.log("object");
     event.preventDefault();
     if (password !== confirmPassword) {
       alert('passwords do not match');
