@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState} from 'react';
 import {
   signInWithGooglePopup,
   signInWithUserEmailAndPassword,
@@ -16,24 +16,22 @@ const defaultFormFields = {
 export const SignInForm = () => {
   const [formFields, setFormFields] = useState(defaultFormFields);
   const { email, password } = formFields;
+  
 
   const resetFormFields = () => {
     setFormFields(defaultFormFields);
   };
 
   const signInWithGoogle = async () => {
-    const { user } = await signInWithGooglePopup();
-    await createUserDocumentFromAuth(user);
+    await signInWithGooglePopup();
+
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await signInWithUserEmailAndPassword(email, password);
+      await signInWithUserEmailAndPassword(email, password);
 
-      if (response.user) {
-        alert('log in sucsessfull');
-      }
       resetFormFields();
     } catch (error) {
       switch (error.code) {
