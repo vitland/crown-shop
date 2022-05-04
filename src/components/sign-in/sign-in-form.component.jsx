@@ -24,7 +24,6 @@ export const SignInForm = () => {
 
   const signInWithGoogle = async () => {
     await signInWithGooglePopup();
-
   };
 
   const handleSubmit = async (event) => {
