@@ -1,4 +1,5 @@
 // Import the functions you need from the SDKs you need
+import { async } from '@firebase/util';
 import { initializeApp } from 'firebase/app';
 import {
   getAuth,
@@ -8,12 +9,21 @@ import {
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
   signOut,
-  onAuthStateChanged
+  onAuthStateChanged,
 } from 'firebase/auth';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
-import { getFirestore, doc, getDoc, setDoc} from 'firebase/firestore';
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  collection,
+  writeBatch,
+  query,
+  getDocs,
+} from 'firebase/firestore';
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: 'AIzaSyAbDi84gUOSETeyTDlhfHiRtynO_cYT4oY',
@@ -43,10 +53,39 @@ export const signInWithUserEmailAndPassword = async (email, password) => {
   if (!email || !password) {
     return;
   }
-    return await signInWithEmailAndPassword(auth, email, password);
-
+  return await signInWithEmailAndPassword(auth, email, password);
 };
 export const db = getFirestore();
+
+export const addCollectionAndDocuments = async (
+  collectionKey,
+  objectsToAdd
+) => {
+  const collectionRef = collection(db, collectionKey);
+  const batch = writeBatch(db);
+
+  objectsToAdd.forEach((obj) => {
+    const docRef = doc(collectionRef, obj.title.toLowerCase());
+    batch.set(docRef, obj);
+  });
+  await batch.commit();
+  console.log('Done');
+};
+
+export const getCategoriesAndDocuments = async () => {
+  const collectionRef = collection(db, 'categories');
+  const q = query(collectionRef);
+
+  const querySnapshot = await getDocs(q);
+
+  const categoryMap = querySnapshot.docs.reduce((acc, docSnapshot) => {
+    const { title, items } = docSnapshot.data();
+    acc[title.toLowerCase()] = items;
+    return acc;
+  }, {});
+
+  return categoryMap;
+};
 
 export const createUserDocumentFromAuth = async (
   userAuth,
@@ -83,6 +122,7 @@ export const createAuthUserWithEmailAndPassword = async (email, password) => {
 };
 
 export const SignOutUser = async () => {
-  await signOut(auth)
-}
-export const onAuthStateChangedListener = (callback) => onAuthStateChanged(auth, callback)
+  await signOut(auth);
+};
+export const onAuthStateChangedListener = (callback) =>
+  onAuthStateChanged(auth, callback);
